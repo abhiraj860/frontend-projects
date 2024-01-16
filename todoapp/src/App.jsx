@@ -17,9 +17,11 @@ function App() {
 
 function CurrentList() {
   const list = useRecoilValue(todoList);
+  // Do using selector
+  const completed = list.filter((value)=>value.completed === true);
   return <div>
     Task not completed:
-    {list.map((value)=><span key={value.id}>{value.text}&nbsp;</span>)}
+    {completed.map((value)=><span key={value.id}>{value.text}&nbsp;</span>)}
   </div>
 }
 
@@ -38,7 +40,7 @@ function ListDisplay() {
           return (
             <div key={value.id}>
               <input type='text' value={value.text} />
-              <input type='checkbox' />
+              <input type='checkbox' onChange={toggleHandler} defaultChecked={value.completed===true?true:false}/>
               <button onClick={()=>deleteHandler(value.id)}>X</button>
             </div>
           )
@@ -51,7 +53,6 @@ function ListDisplay() {
 
 function TodoItem() {
   const list = useRecoilValue(todoList);
-  console.log(list);
   return (
     <div>
       {list.map((value, id)=><div key={id}>{value.text}</div>)}
