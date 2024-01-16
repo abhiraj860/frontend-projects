@@ -18,7 +18,7 @@ function App() {
 function CurrentList() {
   const list = useRecoilValue(todoList);
   // Do using selector
-  const completed = list.filter((value)=>value.completed === true);
+  const completed = list.filter((value)=>value.completed === false);
   return <div>
     Task not completed:
     {completed.map((value)=><span key={value.id}>{value.text}&nbsp;</span>)}
@@ -33,14 +33,30 @@ function ListDisplay() {
       return oldList.filter((value)=>value.id !== ids);
     });
   }
+
+  function toggleHandler(ids) {
+    setTodoList((oldList)=>{
+      const arr = [...oldList];
+      const indx = arr.findIndex(todo=>todo.id === ids);
+      const obj = {...arr[indx]};
+      obj.completed = !obj.completed;
+      arr[indx] = obj;
+      return arr;
+    });
+  }
+
+  function editHandler(ids) {
+
+  }
+
   return (
     <div>
       {
         list.map((value)=>{
           return (
             <div key={value.id}>
-              <input type='text' value={value.text} />
-              <input type='checkbox' onChange={toggleHandler} defaultChecked={value.completed===true?true:false}/>
+              <input type='text' value={value.text} onChange={()=>editHandler(value.id)}/>
+              <input type='checkbox' onChange={()=>toggleHandler(value.id)} defaultChecked={value.completed===true?true:false}/>
               <button onClick={()=>deleteHandler(value.id)}>X</button>
             </div>
           )
