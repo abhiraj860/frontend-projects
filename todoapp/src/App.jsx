@@ -36,17 +36,18 @@ function ListDisplay() {
 
   function toggleHandler(ids) {
     setTodoList((oldList)=>{
-      const arr = [...oldList];
+      const arr = JSON.parse(JSON.stringify(oldList));
       const indx = arr.findIndex(todo=>todo.id === ids);
-      const obj = {...arr[indx]};
-      obj.completed = !obj.completed;
-      arr[indx] = obj;
+      arr[indx].completed = !arr[indx].completed;
       return arr;
     });
   }
 
-  function editHandler(ids) {
-
+  function editHandler(input, ids) {
+    const arr = JSON.parse(JSON.stringify(list));
+    const indx = arr.findIndex(todo=>todo.id === ids);
+    arr[indx].text = input;
+    setTodoList(arr);
   }
 
   return (
@@ -55,9 +56,9 @@ function ListDisplay() {
         list.map((value)=>{
           return (
             <div key={value.id}>
-              <input type='text' value={value.text} onChange={()=>editHandler(value.id)}/>
+              <input type='text' value={value.text} onChange={(e)=>editHandler(e.target.value, value.id)}/>
               <input type='checkbox' onChange={()=>toggleHandler(value.id)} defaultChecked={value.completed===true?true:false}/>
-              <button onClick={()=>deleteHandler(value.id)}>X</button>
+              <button onClick={(e)=>deleteHandler(value.id)}>X</button>
             </div>
           )
         })
