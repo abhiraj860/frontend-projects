@@ -1,12 +1,12 @@
 import { RecoilRoot, useRecoilValue, useSetRecoilState, useRecoilState } from "recoil";
 import { todoList, filters } from "./store/atoms/atoms";
 import { useState } from "react";
-import { listFilter } from "./store/selectors/selectors";
+import { listFilter, stats } from "./store/selectors/selectors";
 function App() {
   return (
     <div>
       <RecoilRoot>
-          <CurrentList />
+          <ListStat />
           <TodoItemCreator />
           <ListDisplay />
       </RecoilRoot>
@@ -14,15 +14,21 @@ function App() {
   );
 }
 
-function CurrentList() {
-  const list = useRecoilValue(todoList);
-  // Do using selector
-  const completed = list.filter((value)=>value.completed === false);
-  return <div>
-    Task not completed:
-    {completed.map((value)=><span key={value.id}>{value.text}&nbsp;</span>)}
-  </div>
+function ListStat() {
+  const p = useRecoilValue(stats); 
+  return (
+    <div>
+      <ul>
+        <li key={1}>Total items: {p.totalNum}</li>
+        <li key={2}>Items Completed: {p.completed}</li>
+        <li key={3}>Items not completed: {p.uncompleted}</li>
+        <li key={4}>Percent completed: {p.percentCompleted}</li>
+        <li key={5}>Text not completed: {p.notCompleted}</li>
+      </ul>
+    </div>
+  );
 }
+
 
 function ListDisplay() {
   
@@ -71,15 +77,6 @@ function ListDisplay() {
   );
 }
 
-
-// function TodoItem() {
-//   const list = useRecoilValue(todoList);
-//   return (
-//     <div>
-//       {list.map((value, id)=><div key={id}>{value.text}</div>)}
-//     </div>
-//   );
-// }
 
 
 
