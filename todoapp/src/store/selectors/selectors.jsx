@@ -1,10 +1,18 @@
 import { selector } from "recoil";
-import { textState } from "../atoms/textState";
+import { filters, todoList } from "../atoms/atoms";
 
-export const charCountState = selector({
-    key: 'charCountState',
+export const listFilter = selector({
+    key: 'listFilter',
     get: ({get})=>{
-        const text = get(textState);
-        return text.length;
+        const list = get(todoList);
+        const filter = get(filters);
+        switch (filter) {
+            case 'completed':
+                return list.filter(item=>item.completed);
+            case 'uncompleted':
+                return list.filter(item=>!item.completed);
+            default:
+                return list;
+        }
     }
 });

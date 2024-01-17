@@ -1,8 +1,7 @@
 import { RecoilRoot, useRecoilValue, useSetRecoilState, useRecoilState } from "recoil";
-import { todoList } from "./store/atoms/atoms";
+import { todoList, filters } from "./store/atoms/atoms";
 import { useState } from "react";
-
-
+import { listFilter } from "./store/selectors/selectors";
 function App() {
   return (
     <div>
@@ -26,7 +25,9 @@ function CurrentList() {
 }
 
 function ListDisplay() {
-  const [list, setTodoList] = useRecoilState(todoList);
+  
+  const setTodoList = useSetRecoilState(todoList);
+  const list = useRecoilValue(listFilter);
 
   function deleteHandler(ids) {
     setTodoList((oldList)=>{
@@ -44,10 +45,13 @@ function ListDisplay() {
   }
 
   function editHandler(input, ids) {
-    const arr = JSON.parse(JSON.stringify(list));
-    const indx = arr.findIndex(todo=>todo.id === ids);
-    arr[indx].text = input;
-    setTodoList(arr);
+    setTodoList((oldList)=>{
+      const arr = JSON.parse(JSON.stringify(oldList));
+      const indx = arr.findIndex(todo=>todo.id === ids);
+      arr[indx].text = input;
+      return arr;
+    });
+    
   }
 
   return (
@@ -68,14 +72,14 @@ function ListDisplay() {
 }
 
 
-function TodoItem() {
-  const list = useRecoilValue(todoList);
-  return (
-    <div>
-      {list.map((value, id)=><div key={id}>{value.text}</div>)}
-    </div>
-  );
-}
+// function TodoItem() {
+//   const list = useRecoilValue(todoList);
+//   return (
+//     <div>
+//       {list.map((value, id)=><div key={id}>{value.text}</div>)}
+//     </div>
+//   );
+// }
 
 
 
@@ -83,6 +87,9 @@ function TodoItem() {
 function TodoItemCreator() {
   const [input, setInput] = useState('');
   const setTodoList = useSetRecoilState(todoList);
+  const [filter, setFilter] = useRecoilState(filters);
+  
+  
   function onChange(event) {
     setInput(event.target.value);
   }
@@ -102,7 +109,13 @@ function TodoItemCreator() {
   return (
     <div>
       <input type='text' value={input} onChange={onChange} />
-      <button onClick={addItem}>Add</button>
+      <button onClick={addItem}>Add</button>&nbsp;&nbsp;
+      Filter: &nbsp;&nbsp;
+      <select defaultValue={filter} onChange={(e)=>setFilter(e.target.value)}>
+        <option value='showAll'>All</option>
+        <option value='completed'>Completed</option>
+        <option value='uncompleted'>Uncompleted</option>
+      </select>
     </div>
   );
 }
