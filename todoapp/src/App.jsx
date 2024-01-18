@@ -2,16 +2,36 @@ import { RecoilRoot, useRecoilValue, useSetRecoilState, useRecoilState } from "r
 import { todoList, filters } from "./store/atoms/atoms";
 import { useState } from "react";
 import { listFilter, stats } from "./store/selectors/selectors";
+import {DragDropContext, Droppable, Draggable} from 'react-beautiful-dnd';
+
 function App() {
   return (
     <div>
       <RecoilRoot>
           <ListStat />
           <TodoItemCreator />
-          <ListDisplay />
+          <Displayer />
       </RecoilRoot>
     </div>
   );
+}
+function Displayer() {
+  const setList = useSetRecoilState(todoList);
+
+  function handleOnDragEnd(result) {
+    if(!result.destination) return;
+    setList((oldList)=>{
+      const arr = JSON.parse(JSON.stringify(oldList));
+      const [reorderedItem] = arr.splice(result.source.index, 1);
+      arr.splice(result.destination.index, 0, reorderedItem);
+      return arr;
+    });
+   }
+  return <div>
+    <DragDropContext onDragEnd={handleOnDragEnd}>
+      <ListDisplay />
+    </DragDropContext>
+  </div> 
 }
 
 function ListStat() {
@@ -60,20 +80,32 @@ function ListDisplay() {
     
   }
 
+
+
   return (
-    <div>
-      {
-        list.map((value)=>{
-          return (
-            <div key={value.id}>
-              <input type='text' value={value.text} onChange={(e)=>editHandler(e.target.value, value.id)}/>
-              <input type='checkbox' onChange={()=>toggleHandler(value.id)} defaultChecked={value.completed===true?true:false}/>
-              <button onClick={(e)=>deleteHandler(value.id)}>X</button>
-            </div>
-          )
-        })
-      }
-    </div>
+    <Droppable droppableId="todolist">
+      {(provided)=>(
+        <div ref={provided.innerRef} {...provided.droppableProps}>
+          {
+            list.map((value, index)=>{
+              return (
+                <Draggable key={value.id} draggableId={String(value.id)} index={index}>
+                  {(provided)=>(
+                    <div key={value.id} ref={provided.innerRef} {...provided.draggableProps} {...provided.dragHandleProps}>
+                    <input type='text' value={value.text} onChange={(e)=>editHandler(e.target.value, value.id)}/>
+                    <input type='checkbox' onChange={()=>toggleHandler(value.id)} defaultChecked={value.completed===true?true:false}/>
+                    <button onClick={(e)=>deleteHandler(value.id)}>X</button>
+                    </div>
+                  )}
+                </Draggable>
+              )
+            })
+          }
+          {provided.placeholder}
+        </div>
+      )}
+    
+    </Droppable>
   );
 }
 
