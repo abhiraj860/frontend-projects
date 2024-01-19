@@ -5,6 +5,8 @@ export const todoList = atom({
     default: []
 });
 
+
+
 export const filters = atom({
     key: 'filters',
     default: 'showAll'

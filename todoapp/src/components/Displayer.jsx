@@ -1,16 +1,16 @@
 import {DragDropContext, Droppable, Draggable} from 'react-beautiful-dnd';
 import { useSetRecoilState, useRecoilValue } from 'recoil';
-import { todoList } from '../store/atoms/atoms';
+import { filters, todoList } from '../store/atoms/atoms';
 import { listFilter } from '../store/selectors/selectors';
 
 export function Displayer() {
     const setList = useSetRecoilState(todoList);
-  
     function handleOnDragEnd(result) {
       if(!result.destination) return;
       setList((oldList)=>{
         const arr = JSON.parse(JSON.stringify(oldList));
         const [reorderedItem] = arr.splice(result.source.index, 1);
+        console
         arr.splice(result.destination.index, 0, reorderedItem);
         return arr;
       });
