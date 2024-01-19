@@ -1,4 +1,4 @@
-import { RecoilRoot, useRecoilValue, useSetRecoilState, useRecoilState } from "recoil";
+import { useRecoilValue, useSetRecoilState, useRecoilState } from "recoil";
 import { todoList, filters } from "./store/atoms/atoms";
 import { useState } from "react";
 import { listFilter, stats } from "./store/selectors/selectors";
@@ -7,11 +7,9 @@ import {DragDropContext, Droppable, Draggable} from 'react-beautiful-dnd';
 function App() {
   return (
     <div>
-      <RecoilRoot>
-          <ListStat />
-          <TodoItemCreator />
-          <Displayer />
-      </RecoilRoot>
+      <ListStat />
+      <TodoItemCreator />
+      <Displayer />
     </div>
   );
 }
