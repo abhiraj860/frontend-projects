@@ -26,7 +26,16 @@ export function Displayer() {
     
     const setTodoList = useSetRecoilState(todoList);
     const list = useRecoilValue(listFilter);
-  
+    const filt = useRecoilValue(filters);
+    if(filt === 'completed' || filt === 'uncompleted') {
+      return (
+        <div>
+          {
+            list.map((value, index)=><div key={index}>{value.text}</div>)
+          }
+        </div>
+      )
+    }
     function deleteHandler(ids) {
       setTodoList((oldList)=>{
         return oldList.filter((value)=>value.id !== ids);
