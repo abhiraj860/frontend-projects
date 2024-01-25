@@ -1,4 +1,3 @@
-import { useState } from 'react'
 import ColourPallete from './components/ColourPallete'
 import './App.css'
 
