@@ -1,9 +1,9 @@
 import { useRecoilValue } from "recoil"
-import { inputNum } from "../atoms/atoms";
+import { paragraph } from "../atoms/selectors";
 
 export default function Outputs() {
-    const inputVal = useRecoilValue(inputNum);
+    const para = useRecoilValue(paragraph);
     return <div>
-        {inputVal}
+        {para}
     </div>
 }
