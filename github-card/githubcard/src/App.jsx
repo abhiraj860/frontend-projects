@@ -11,8 +11,10 @@ function App() {
   const [location, setLocation] = useState(0);
   const [bday, setbday] = useState(0);
   useEffect(()=>{
-    axios.get("https://dummyapi.online/api/social-profiles").then(resp=>{
-      const res = resp.data[1];
+    setLoading(true);
+    const time = setInterval(()=> {
+      axios.get("https://dummyapi.online/api/social-profiles").then(resp=>{
+      const res = resp.data[0];
       setName(res.fullName);
       setFollow(res.followersCount);
       setLikes(res.followingCount);
@@ -25,11 +27,17 @@ function App() {
       setbday(Math.abs(Math.round(diff)));
       setLoading(false);
     });
+
+  } ,5000);
+    return ()=>{
+      clearInterval(time);
+      setLoading(true);
+    }
   }, []);
 
   return (
     <div className="bg-slate-500 flex justify-center min-h-screen items-center">
-      {(loading=== true) ? <p>{loading}</p> : <ProfileCard name={name}
+      {(loading === true) ? <h1 className='text-white font-bold text-4xl'>Loading....</h1> : <ProfileCard name={name}
                                                            follow={follow}
                                                            like={likes}
                                                            post={posts}
