@@ -26,12 +26,14 @@ function App() {
       let diff = (today.getTime() - dob.getTime())/1000/60/60/24/365.25;
       setbday(Math.abs(Math.round(diff)));
       setLoading(false);
-    });
+    }).catch(error=>{
+      setLoading(true);
+    })
 
   } ,5000);
     return ()=>{
-      clearInterval(time);
       setLoading(true);
+      clearInterval(time);
     }
   }, []);
 
