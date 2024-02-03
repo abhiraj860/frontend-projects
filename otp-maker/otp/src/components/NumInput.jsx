@@ -3,55 +3,58 @@ import { useEffect } from "react";
 import { useRef } from "react"
 import { Button } from "./Button"
 
+const otp = "1234"
+
 export function NumInput() {
-    const inputRef1 = useRef(null);
-    const inputRef2 = useRef(null);
-    const inputRef3 = useRef(null);
-    const inputRef4 = useRef(null);
-    const [disab1, setDisab1] = useState(false);
-    const [disab2, setDisab2] = useState(false);
-    const [disab3, setDisab3] = useState(false);
-    const [disab4, setDisab4] = useState(false);
+    const [inp, setInp] = useState(new Array("","","",""));
+    const [indx, setIndx] = useState(0);
+    const [take, setTake] = useState(false);
+    const items = useRef(new Array(4));
+    let ind = useRef(0);
+
     useEffect(()=>{
-        inputRef1.current.focus();
-    }, []);
-    function ch1(e) {
-        if(e.target.value.length === 1) {
-            inputRef2.current.focus();
-        } 
-        return;
+        window.addEventListener("keydown", function(e) {
+            if(["Space","ArrowUp","ArrowDown","ArrowLeft","ArrowRight", "Tab"].indexOf(e.code) > -1) {
+                e.preventDefault();
+            }
+        }, false);
+        if(ind.current < otp.length && ind.current >= 0) {
+            items.current[ind.current].focus();
+        }  
+    }, [ind.current, take]);
+
+    function chHandler(e) {
+        const arr = [...inp];
+        arr[indx] = e.target.value;
+        setInp(arr);
+        if(indx < otp.length - 1 && e.target.value > 0) setIndx((v) => v + 1);
+        if (ind.current < otp.length - 1 && e.target.value > 0)ind.current = ind.current + 1;
     }
-    function ch2(e) {
-        if(e.target.value.length === 1) {
-            inputRef3.current.focus();
-        } 
-        if(e.target.value.length === 0) inputRef1.current.focus();
-        return;
-    }
-    function ch3(e) {
-        console.log(e.target.value);
-        if(e.target.value.length === 1) {
-            inputRef4.current.focus();
+
+    function clickHandler() {
+        if(inp.join('') === otp) {
+            alert('Correct OTP');
+        } else {
+            alert('Wrong OTP');
         }
-        if(e.target.value.length === 0) inputRef2.current.focus();
-        return;
+        setTake((t)=>!t);
     }
-    function ch4(e) {
-        if(e.target.value.length === 0) inputRef3.current.focus();
-        return;
+
+    function backChange(e) {
+        if(e.code === 'Backspace' && ind.current > 0) {
+            ind.current = ind.current - 1;
+            setIndx(v=>v - 1);
+        }
     }
-    
+
     return (
         <div>
             <div className="flex gap-3">
-                {/* {console.log(disab1)} */}
-                <input ref={inputRef1} disabled={disab1} onChange={ch1} type="text" maxLength={"1"} pattern="[0-9]+" className="text-white bg-black p-4 border-2 rounded-lg text-xl h-12 w-12 font-medium  [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"/>
-                <input ref={inputRef2} disabled={disab2} onChange={ch2} type="text" maxLength={"1"} className="text-white bg-black p-4 border-2 rounded-lg text-xl h-12 w-12 font-medium  [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"/>
-                <input ref={inputRef3} disabled={disab3} onChange={ch3} type="text" maxLength={"1"} className="text-white bg-black p-4 border-2 rounded-lg text-xl h-12 w-12 font-medium  [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"/>
-                <input ref={inputRef4} disabled={disab4} onChange={ch4} type="text" maxLength={"1"} className="text-white bg-black p-4 border-2 rounded-lg text-xl h-12 w-12 font-medium  [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"/>
+            {inp.map((val, id)=><input onKeyUp={backChange} ref={(ele)=>{items.current[id] = ele}} key={id} value={val} onChange={chHandler} disabled={(indx===id)?false:true} type="text" maxLength={"1"} className="text-white bg-black p-4 border-2 rounded-lg text-xl h-12 w-12 font-medium  [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"/>
+            )}
             </div>
             <div className="flex justify-center mt-8">
-                <Button text={"Login"}/>
+                <Button text={"Login"} clickHandler={clickHandler}/>
             </div>
         </div>
         
