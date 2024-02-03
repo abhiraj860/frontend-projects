@@ -10,8 +10,9 @@ export function NumInput() {
     const [indx, setIndx] = useState(0);
     const [take, setTake] = useState(false);
     const items = useRef(new Array(4));
-    let ind = useRef(0);
+    const [cnt, setCnt] = useState(0);
 
+    let ind = useRef(0);
     useEffect(()=>{
         window.addEventListener("keydown", function(e) {
             if(["Space","ArrowUp","ArrowDown","ArrowLeft","ArrowRight", "Tab"].indexOf(e.code) > -1) {
@@ -29,6 +30,9 @@ export function NumInput() {
         setInp(arr);
         if(indx < otp.length - 1 && e.target.value > 0) setIndx((v) => v + 1);
         if (ind.current < otp.length - 1 && e.target.value > 0)ind.current = ind.current + 1;
+        if(e.target.value === 0) {
+            setCnt(v=>v+1);
+        }
     }
 
     function clickHandler() {
@@ -41,16 +45,18 @@ export function NumInput() {
     }
 
     function backChange(e) {
-        if(e.code === 'Backspace' && ind.current > 0) {
+        if(e.code === 'Backspace' && ind.current > 0 && cnt % 2 === 0) {
             ind.current = ind.current - 1;
             setIndx(v=>v - 1);
         }
+        setCnt(c=> c + 1);
     }
 
+    
     return (
         <div>
             <div className="flex gap-3">
-            {inp.map((val, id)=><input onKeyUp={backChange} ref={(ele)=>{items.current[id] = ele}} key={id} value={val} onChange={chHandler} disabled={(indx===id)?false:true} type="text" maxLength={"1"} className="text-white bg-black p-4 border-2 rounded-lg text-xl h-12 w-12 font-medium  [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"/>
+            {inp.map((val, id)=><input onKeyUp={backChange}  ref={(ele)=>{items.current[id] = ele}} key={id} value={val} onChange={chHandler} disabled={(indx===id)?false:true} type="text" maxLength={"1"} className="text-white bg-black p-4 border-2 rounded-lg text-xl h-12 w-12 font-medium  [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"/>
             )}
             </div>
             <div className="flex justify-center mt-8">
